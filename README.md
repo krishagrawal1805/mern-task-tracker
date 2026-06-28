@@ -1,211 +1,238 @@
 # MERN Stack Task Tracker
 
-A full-stack Task Management application built using the MERN stack (MongoDB, Express.js, React, Node.js). The application utilizes a Mongoose ORM for structured database communication, an Axios-based HTTP client for frontend-backend integration, and a responsive Tailwind CSS interface.
-
-To ensure continuous operation during developer testing, the backend features a dual-mode database connector that pairs with a remote MongoDB Atlas database while providing a server-side, in-memory collection fallback if the database environment variables are not supplied.
+A full-stack Task Tracker web application built using the **MERN Stack (MongoDB, Express.js, React.js, and Node.js)**. The application allows users to create, manage, update, and delete tasks through a responsive interface while communicating with a RESTful backend API connected to MongoDB Atlas.
 
 ---
 
-## 🚀 Features
+## 🌐 Live Demo
 
-- **Full CRUD Operations**: Implementations for creating, reading, updating, and deleting tasks.
-- **Dynamic Task Filtering**: Filter tasks in real-time by status (All, Pending, Completed, Archived).
-- **Multi-Criteria Sorting**: Sort active task views by creation date, due date, or priority level.
-- **Search System**: Instantly query tasks by title or description using client-side fuzzy searching.
-- **Connection Status Dashboard**: Direct, visual connection indicators displaying active MongoDB Atlas synchronization states.
-- **Toast Notifications**: Interactive state alerts indicating API actions, errors, and task adjustments.
-- **Responsive Layout**: Fluid UI optimized for desktop monitors, tablet screens, and mobile displays.
+**Application:** https://mern-task-trackerddd.onrender.com
+
+## 📁 GitHub Repository
+
+**Repository:** https://github.com/krishagrawal1805/mern-task-tracker
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ Features
+
+* Create, Read, Update and Delete (CRUD) tasks
+* Form validation
+* RESTful API using Express.js
+* MongoDB Atlas integration using Mongoose
+* Dynamic UI updates without page refresh
+* Responsive design for desktop and mobile
+* Search tasks by title or description
+* Filter tasks by status
+* Sort tasks by creation date, due date, or priority
+* Toast notifications for task operations
+* Modular and reusable React components
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework**: React 19 with TypeScript
-- **Build Tool**: Vite (bundler and local dev proxy)
-- **HTTP Client**: Axios (configured with standardized instance headers)
-- **Styling**: Tailwind CSS v4 (fully responsive utility design)
-- **Icons**: Lucide React
-- **Animations**: `motion` (micro-transitions and entry-stagger layout)
+
+* React 19
+* TypeScript
+* Vite
+* Tailwind CSS
+* Axios
+* Lucide React
+* Motion
 
 ### Backend
-- **Runtime**: Node.js
-- **Server Framework**: Express.js
-- **Database ORM**: Mongoose
-- **Cross-Origin Configuration**: Cors middleware
-- **Compilation**: esbuild (compiles and bundles the TypeScript backend into a single CommonJS server asset)
 
-### Database
-- **Primary Datastore**: MongoDB Atlas (Cloud Database)
-- **Auxiliary Fallback**: Server-side, stateful in-memory collection
+* Node.js
+* Express.js
+* Mongoose
+* MongoDB Atlas
+* dotenv
+* CORS
 
 ---
 
-## 📂 Project Architecture
-
-The codebase utilizes a clean separation of concerns, housing the backend modules in `/server` and the frontend application in `/src`, served via a single entry point:
+## 📂 Project Structure
 
 ```text
-├── server/                     # Backend Source Code
-│   ├── config/                 # Database connection & credentials
-│   │   └── db.ts
-│   ├── controllers/            # Controller handlers for REST endpoints
-│   │   └── taskController.ts
-│   ├── models/                 # Database schemas & TypeScript interfaces
-│   │   └── Task.ts
-│   └── routes/                 # Express REST endpoint routing
-│       └── taskRoutes.ts
-├── src/                        # Frontend React Application
-│   ├── components/             # Reusable UI components
-│   │   ├── SideNavBar.tsx      # Sidebar navigation
-│   │   ├── TopNavBar.tsx       # Header with DB status & search bar
-│   │   ├── TaskCard.tsx        # Task display card
-│   │   ├── TaskModal.tsx       # Creator/Editor modal dialog
-│   │   └── Toast.tsx           # Float-alert alert system
-│   ├── api.ts                  # Axios client module (queries the Express endpoints)
-│   ├── App.tsx                 # Core state coordinator & overall layout
-│   ├── index.css               # Global styling entry point with Tailwind imports
-│   ├── main.tsx                # React browser mount point
-│   └── types.ts                # Shared TypeScript definitions
-├── server.ts                   # Express server entry point and Vite proxy loader
-├── package.json                # Project script registry & dependencies
-└── tsconfig.json               # TypeScript compiler config
+server/
+├── config/
+│   └── db.ts
+├── controllers/
+│   └── taskController.ts
+├── models/
+│   └── Task.ts
+├── routes/
+│   └── taskRoutes.ts
+
+src/
+├── components/
+│   ├── SideNavBar.tsx
+│   ├── TopNavBar.tsx
+│   ├── TaskCard.tsx
+│   ├── TaskModal.tsx
+│   └── Toast.tsx
+├── api.ts
+├── App.tsx
+├── index.css
+├── main.tsx
+└── types.ts
+
+server.ts
+package.json
+tsconfig.json
 ```
 
 ---
 
 ## ⚙️ Environment Variables
 
-Copy the provided `.env.example` file to a new file named `.env` in the root directory:
+Create a `.env` file in the project root.
 
 ```env
-# MongoDB Atlas Database URI
-MONGODB_URI="mongodb+srv://<username>:<password>@cluster.mongodb.net/taskdb?retryWrites=true&w=majority"
+MONGODB_URI=your_mongodb_connection_string
 ```
 
 ---
 
-## 🛰️ REST API Documentation
+## 📡 REST API
 
-All request endpoints are registered under the `/api` route prefix.
+### Get Database Status
 
-### 1. Retrieve Database Status
-- **Endpoint**: `GET /api/db-status`
-- **Output (200 OK)**:
-  ```json
-  {
-    "connected": true,
-    "type": "MongoDB Cloud",
-    "uriDefined": true,
-    "errorMessage": null
-  }
-  ```
+```http
+GET /api/db-status
+```
 
-### 2. Retrieve All Tasks
-- **Endpoint**: `GET /api/tasks`
-- **Output (200 OK)**:
-  ```json
-  [
-    {
-      "id": "6a40fef9d08c08beff393d18",
-      "title": "Establish MERN Setup",
-      "description": "Port database connector logic from Firebase to Mongoose",
-      "status": "completed",
-      "priority": "high",
-      "dueDate": "2026-06-29",
-      "createdAt": "2026-06-28T11:01:13.825Z"
-    }
-  ]
-  ```
-
-### 3. Create a Task
-- **Endpoint**: `POST /api/tasks`
-- **Payload**:
-  ```json
-  {
-    "title": "Database Schema Audit",
-    "description": "Verify indexes and constraints in MongoDB collections",
-    "priority": "high",         // Allowed: 'low' | 'medium' | 'high'
-    "dueDate": "2026-06-30"     // Format: YYYY-MM-DD
-  }
-  ```
-- **Output (210 Created)**: Returns the newly saved task object.
-
-### 4. Update a Task
-- **Endpoint**: `PUT /api/tasks/:id`
-- **Payload**: Supports partial key/value updates (`title`, `description`, `status`, `priority`, `dueDate`).
-- **Output (200 OK)**: Returns the updated task object.
-
-### 5. Delete a Task
-- **Endpoint**: `DELETE /api/tasks/:id`
-- **Output (200 OK)**:
-  ```json
-  {
-    "message": "Task deleted successfully",
-    "id": "6a40fef9d08c08beff393d18"
-  }
-  ```
+Returns the current MongoDB connection status.
 
 ---
 
-## 🛠️ Installation and Local Setup
+### Get All Tasks
 
-### 1. Prerequisites
-Ensure you have **Node.js** (v18 or higher) and **npm** installed.
+```http
+GET /api/tasks
+```
 
-### 2. Clone and Install
+Returns all tasks.
+
+---
+
+### Create Task
+
+```http
+POST /api/tasks
+```
+
+Example Request:
+
+```json
+{
+  "title": "Complete Assignment",
+  "description": "Finish MERN Task Tracker",
+  "priority": "high",
+  "dueDate": "2026-06-30"
+}
+```
+
+Response:
+
+**201 Created**
+
+---
+
+### Update Task
+
+```http
+PUT /api/tasks/:id
+```
+
+Updates an existing task.
+
+---
+
+### Delete Task
+
+```http
+DELETE /api/tasks/:id
+```
+
+Deletes the selected task.
+
+---
+
+## 🚀 Local Setup
+
+### Clone Repository
+
 ```bash
-# Extract or clone the codebase
-cd TaskTracker
+git clone https://github.com/krishagrawal1805/mern-task-tracker.git
 
-# Install dependencies
+cd mern-task-tracker
+```
+
+### Install Dependencies
+
+```bash
 npm install
 ```
 
-### 3. Define local environment variables
-Create a `.env` file in the root directory and supply your MongoDB Atlas Connection String (`MONGODB_URI`).
+### Configure Environment Variables
 
-### 4. Boot Dev Server
+Create a `.env` file and add your MongoDB Atlas connection string.
+
+### Run Development Server
+
 ```bash
 npm run dev
 ```
-The Express server boots on port `3000`, running the API backend and proxying frontend client traffic using embedded Vite middleware at `http://localhost:3000`.
+
+The application will be available at:
+
+```
+http://localhost:3000
+```
 
 ---
 
-## 🚀 Production Build and Deployment
+## 📦 Production Build
 
-### 1. Compile Assets
+Build the application:
+
 ```bash
 npm run build
 ```
-This single build command compiles the React web assets into static distribution files inside `/dist`, and bundles the Express server file (`server.ts`) into a standalone CommonJS file at `/dist/server.cjs`.
 
-### 2. Run Production Server
+Run the production server:
+
 ```bash
 npm run start
-```
-This command serves the React SPA statically and powers the REST API routes.
-
-### 3. Container Deployment (Docker)
-This project contains no runtime dependencies on development tools and is ready for container deployments:
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist/ ./dist/
-ENV NODE_ENV=production
-EXPOSE 3000
-CMD ["node", "dist/server.cjs"]
 ```
 
 ---
 
-## 🖼️ Application Screenshots
+## ☁️ Deployment
 
-### Desktop Main Dashboard
-*(Placeholder for Desktop Main Dashboard: Shows full grid with stats counters, search bars, filter side navigation, and responsive task lists).*
+The application is deployed on **Render**.
 
-### Mobile Task View
-*(Placeholder for Mobile Responsive View: Displays stack layouts, bottom sheets, drawer transitions, and responsive grid optimization).*
+* Frontend and backend are served from a single Express application.
+* MongoDB Atlas is used as the production database.
+* Environment variables are configured through Render.
+
+---
+
+## 📸 Screenshots
+
+Add screenshots of the application here before submitting if possible.
+
+Example:
+
+* Dashboard
+* Create Task Modal
+* Mobile View
+
+---
+
+## 📄 License
+
+This project was developed as part of a **Full Stack Developer Internship Technical Assignment**.
