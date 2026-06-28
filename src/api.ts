@@ -12,7 +12,7 @@ export interface DBStatus {
 
 // Set up default axios instance with standard configuration
 const api = axios.create({
-  baseURL: '', // Relative paths are handled by the Vite server proxying to port 3000
+  baseURL: (import.meta as any).env?.VITE_API_BASE_URL || '', // Support Vercel deployment targeting a Render backend, fallback to relative path
   headers: {
     'Content-Type': 'application/json'
   }

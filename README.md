@@ -37,6 +37,7 @@ To ensure continuous operation during developer testing, the backend features a 
 
 ### Database
 - **Primary Datastore**: MongoDB Atlas (Cloud Database)
+- **Auxiliary Fallback**: Server-side, stateful in-memory collection
 
 ---
 
@@ -128,7 +129,7 @@ All request endpoints are registered under the `/api` route prefix.
     "dueDate": "2026-06-30"     // Format: YYYY-MM-DD
   }
   ```
-- **Output (201 Created)**: Returns the newly saved task object.
+- **Output (210 Created)**: Returns the newly saved task object.
 
 ### 4. Update a Task
 - **Endpoint**: `PUT /api/tasks/:id`
