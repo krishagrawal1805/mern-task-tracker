@@ -1,0 +1,6 @@
+{
+  "name": "MERN TaskTracker",
+  "description": "A high-performance MERN Stack (MongoDB, Express.js, React.js, Node.js) Task Tracker featuring RESTful APIs, filtering, sorting, and dynamic updates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

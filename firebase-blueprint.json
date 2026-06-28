@@ -1,0 +1,19 @@
+{
+  "collections": {
+    "tasks": {
+      "schema": {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "priority": "string",
+        "dueDate": "string",
+        "createdAt": "string"
+      },
+      "rules": {
+        "read": "true",
+        "write": "true"
+      }
+    }
+  }
+}
