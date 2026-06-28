@@ -1,16 +1,21 @@
 import { Request, Response } from 'express';
 import { getIsConnected, getDBStatusInfo } from '../config/db.ts';
-import { TaskModel, inMemoryTasks, formatMongoTask, ITask } from '../models/Task.ts';
+import { TaskModel, inMemoryTasks, formatMongoTask, ITask, SAMPLE_TASKS } from '../models/Task.ts';
 
 // 1. Get database connectivity status
 export const getDBStatus = (req: Request, res: Response) => {
   res.json(getDBStatusInfo());
 };
 
-// 2. Read all tasks
+// 2. Read all tasks (with automatic seeding if empty)
 export const getTasks = async (req: Request, res: Response) => {
   try {
     if (getIsConnected()) {
+      const count = await TaskModel.countDocuments();
+      if (count === 0) {
+        console.log('MongoDB Atlas is empty. Auto-seeding 6 sample tasks...');
+        await TaskModel.insertMany(SAMPLE_TASKS);
+      }
       const dbTasks = await TaskModel.find().sort({ createdAt: -1 });
       res.json(dbTasks.map(formatMongoTask));
     } else {
