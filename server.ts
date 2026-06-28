@@ -9,7 +9,7 @@ import taskRoutes from './server/routes/taskRoutes.ts';
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Configure CORS
 app.use(cors({
