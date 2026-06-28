@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import { connectDB } from './server/config/db.ts';
@@ -9,6 +10,13 @@ dotenv.config();
 
 const app = express();
 const PORT = 3000;
+
+// Configure CORS
+app.use(cors({
+  origin: '*', // Allows any origin in dev, fully compatible with proxy routes
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Debug middleware to add custom header
 app.use((req, res, next) => {

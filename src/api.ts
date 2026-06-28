@@ -1,6 +1,7 @@
+import axios from 'axios';
 import { Task } from './types';
 
-// API Client for the Express + MongoDB backend
+// API Client for the Express + MongoDB backend using Axios
 
 export interface DBStatus {
   connected: boolean;
@@ -9,17 +10,18 @@ export interface DBStatus {
   errorMessage?: string | null;
 }
 
+// Set up default axios instance with standard configuration
+const api = axios.create({
+  baseURL: '', // Relative paths are handled by the Vite server proxying to port 3000
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 export async function getDBStatus(): Promise<DBStatus> {
   try {
-    const res = await fetch('/api/db-status');
-    if (!res.ok) {
-      throw new Error(`Failed to fetch DB status: Status ${res.status}`);
-    }
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Received non-JSON response from DB status API (likely server is starting up)');
-    }
-    return await res.json();
+    const res = await api.get<DBStatus>('/api/db-status');
+    return res.data;
   } catch (error: any) {
     console.warn('DB Status API temporary warning:', error.message || error);
     return {
@@ -32,15 +34,8 @@ export async function getDBStatus(): Promise<DBStatus> {
 
 export async function fetchTasks(): Promise<Task[]> {
   try {
-    const res = await fetch('/api/tasks');
-    if (!res.ok) {
-      throw new Error(`Failed to fetch tasks: Status ${res.status}`);
-    }
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Received non-JSON response from tasks API (likely server is starting up)');
-    }
-    return await res.json();
+    const res = await api.get<Task[]>('/api/tasks');
+    return res.data;
   } catch (error: any) {
     console.warn('Tasks API temporary warning:', error.message || error);
     return [];
@@ -53,64 +48,39 @@ export async function createTask(taskData: {
   priority: 'low' | 'medium' | 'high';
   dueDate: string;
 }): Promise<Task> {
-  const res = await fetch('/api/tasks', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(taskData)
-  });
-  if (!res.ok) {
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || 'Failed to create task');
+  try {
+    const res = await api.post<Task>('/api/tasks', taskData);
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.data?.error) {
+      throw new Error(error.response.data.error);
     }
-    throw new Error('Server returned an invalid response.');
+    throw new Error(error.message || 'Failed to create task');
   }
-  const contentType = res.headers.get('content-type');
-  if (!contentType || !contentType.includes('application/json')) {
-    throw new Error('Server returned an invalid JSON response.');
-  }
-  return await res.json();
 }
 
 export async function updateTask(
   id: string,
   taskData: Partial<Task>
 ): Promise<Task> {
-  const res = await fetch(`/api/tasks/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(taskData)
-  });
-  if (!res.ok) {
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || 'Failed to update task');
+  try {
+    const res = await api.put<Task>(`/api/tasks/${id}`, taskData);
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.data?.error) {
+      throw new Error(error.response.data.error);
     }
-    throw new Error('Server returned an invalid response.');
+    throw new Error(error.message || 'Failed to update task');
   }
-  const contentType = res.headers.get('content-type');
-  if (!contentType || !contentType.includes('application/json')) {
-    throw new Error('Server returned an invalid JSON response.');
-  }
-  return await res.json();
 }
 
 export async function deleteTask(id: string): Promise<void> {
-  const res = await fetch(`/api/tasks/${id}`, {
-    method: 'DELETE'
-  });
-  if (!res.ok) {
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || 'Failed to delete task');
+  try {
+    await api.delete(`/api/tasks/${id}`);
+  } catch (error: any) {
+    if (error.response?.data?.error) {
+      throw new Error(error.response.data.error);
     }
-    throw new Error('Server returned an invalid response.');
+    throw new Error(error.message || 'Failed to delete task');
   }
 }
